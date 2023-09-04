@@ -1,2 +1,2 @@
 FROM heartocean/working:tomcat
-COPY /target/maven-web-application.war /app/tomcat/webapps/maven-web-application.war
+COPY /target/spring-boot-mongo-1.0.jar /app/tomcat/webapps/spring-boot-mongo.jar
