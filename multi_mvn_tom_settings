@@ -11,9 +11,9 @@ RUN apk add --no-cache openjdk11 zip \
 FROM alpine
 RUN apk add --no-cache openjdk11-jre zip
 WORKDIR /tom
-ADD https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.96/bin/apache-tomcat-8.5.96.zip /tom
-RUN unzip apache-tomcat-8.5.96.zip \
-&&  mv apache-tomcat-8.5.96 tomcat  \
+ADD https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.97/bin/apache-tomcat-8.5.97.zip /tom
+RUN unzip apache-tomcat-8.5.97.zip \
+&&  mv apache-tomcat-8.5.97 tomcat  \
 &&  chmod 700 -R /tom/tomcat/  \
 &&  chmod u+x /tom/tomcat/bin/*.sh
 COPY --from=build /app/target/spring-boot-mongo*.jar /tom/tomcat/webapps/spring-boot-mongo.jar
