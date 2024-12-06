@@ -1,0 +1,24 @@
+FROM alpine as stage1
+WORKDIR /mavn
+COPY . .
+ADD https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz /mavn
+ENV PATH="$PATH:/mavn/maven/mvn" 
+RUN apk add --no-cache openjdk8-jre tar \
+&& tar -xzvf apache-maven-3.9.5 \
+&& mv apache-maven-3.9.5 maven \ 
+&& chmod 700 -R /app/maven \
+&& mvn clean validate \
+&& mvn clean compile \ 
+&& mvn clean test \
+&& mvn clean package 
+
+FROM alpine 
+WORKDIR /app
+ADD https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.98/bin/apache-tomcat-8.5.98.zip /app
+RUN unzip apache-tomcat-8.5.98 \
+&& mv apache-tomcat-8.5.98 tomcat \
+&& chmod 700 -R /app/tomcat/  \
+&& chmod u+x /app/tomcat/bin/*.sh
+COPY --from=stage1 /mavn/target/spring-boot-mongo.jar /app/tomcat/webapps/spring.jar
+EXPOSE 8080
+CMD ["/app/tomcat/bin/catalina.sh", "run"]

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 FROM maven as built
 WORKDIR /build
 COPY . .
@@ -17,3 +18,26 @@ RUN apk add openjdk11 wget doas \
 COPY --from=built /build/spring-boot-mongo-1.0.jar  /app/tomcat/wepapps/spring
 USER tomcat
 CMD ["tomcat/bin/catalina.sh", "run"]
+=======
+FROM alpine as build
+WORKDIR /app
+COPY . /app
+ADD https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.zip /app
+RUN apk add --no-cache openjdk11 zip \
+&& unzip apache-maven-3.9.5-bin.zip \
+&& mv apache-maven-3.9.5 maven \
+&& chmod 700 -R maven  \
+&& /app/maven/bin/mvn clean package
+
+FROM alpine
+RUN apk add --no-cache openjdk11-jre 
+WORKDIR /tom
+ADD  https://dlcdn.apache.org/tomcat/tomcat-8/v8.5.97/bin/apache-tomcat-8.5.97.zip /tom
+RUN unzip apache-tomcat-8.5.97.zip && rm -rf apache-tomcat-8.5.97.zip \
+&&  mv apache-tomcat-8.5.97 tomcat  \
+&&  chmod 700 -R /tom/tomcat/  \
+&&  chmod u+x /tom/tomcat/bin/*.sh
+COPY --from=build /app/target/spring-boot-mongo*.jar /tom/tomcat/webapps/spring-boot-mongo.jar
+EXPOSE 8080
+CMD ["/tom/tomcat/bin/catalina.sh","run"]
+>>>>>>> 30f051c0084278a8917ceede72937965df797482
